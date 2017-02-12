@@ -2635,23 +2635,13 @@ void ins_f_byte(unsigned int b)
     and_reg32_imm( P_REG_RAX, PIKE_FRAME_RETURN_INTERNAL);
     jnz( &label_A );
     /* So, it is just a normal return. */
-    LABEL_B;
     /* Actually return */
     flush_dirty_regs();
     amd64_return_from_function();
-    /* */
+    /* inter return */
     LABEL_A;
-    /* We should jump to the given address. */
-    mov_mem32_reg( fp_reg, OFFSETOF(pike_frame, flags), P_REG_RAX );
-    and_reg32_imm( P_REG_RAX, PIKE_FRAME_RETURN_POP );
-    jnz( &label_C );
     amd64_call_c_function( low_return );
-    jmp( &label_D );
 
-    LABEL_C;
-    amd64_call_c_function( low_return_pop );
-
-    LABEL_D;
     fp_reg = -1;
     amd64_load_fp_reg();
     mov_mem_reg( fp_reg, OFFSETOF(pike_frame, return_addr), P_REG_RAX );
