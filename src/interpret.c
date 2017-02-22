@@ -2018,7 +2018,7 @@ PMOD_EXPORT void really_free_pike_frame( struct pike_frame *X )
     DO_IF_DEBUG(
         if(X->flags & PIKE_FRAME_MALLOCED_LOCALS)
             Pike_fatal("Pike frame is not supposed to have malloced locals here!\n"));
-  if(X->flags & PIKE_FRAME_SAVE_LOCALS)
+  if(X->save_locals_bitmask)
     free(X->save_locals_bitmask);
   DO_IF_DMALLOC(
     X->current_program=0;
@@ -2049,6 +2049,7 @@ struct pike_frame *alloc_pike_frame(void)
       res->flags=0;
       res->next=0;
       res->scope=0;
+      res->save_locals_bitmask = NULL;
       return res;
     }
 
@@ -4027,8 +4028,10 @@ PMOD_EXPORT void callsite_reset_pikecall(struct pike_callsite *c) {
     frame->num_locals = 0;
     frame->num_args = 0;
     frame->return_addr = NULL;
-    if (UNLIKELY(frame->flags & PIKE_FRAME_SAVE_LOCALS))
+    if (UNLIKELY(frame->save_locals_bitmask)) {
       free(frame->save_locals_bitmask);
+      frame->save_locals_bitmask = NULL;
+    }
     frame->flags = 0;
     return;
   }
@@ -4232,6 +4235,7 @@ void LOW_POP_PIKE_FRAME(struct pike_frame *frame) {
       }
       frame->flags &= ~PIKE_FRAME_SAVE_LOCALS;
       free(frame->save_locals_bitmask);
+      frame->save_locals_bitmask = NULL;
       frame->num_locals = num_new_locals;
       frame->locals=s;
       frame->flags|=PIKE_FRAME_MALLOCED_LOCALS;
