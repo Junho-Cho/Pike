@@ -3449,6 +3449,9 @@ PMOD_EXPORT void callsite_resolve_fun(struct pike_callsite *c, struct object *o,
 
   Pike_fp = frame;
   c->frame = frame;
+
+  check_stack(256);
+  check_mark_stack(256);
 }
 
 PMOD_EXPORT void callsite_resolve_lfun(struct pike_callsite *c, struct object *o, int lfun) {
