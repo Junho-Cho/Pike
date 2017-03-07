@@ -2071,8 +2071,7 @@ void really_free_pike_scope(struct pike_frame *scope)
 void *lower_mega_apply( INT32 args, struct object *o, ptrdiff_t fun )
 {
   struct pike_callsite C;
-  callsite_init(&C);
-  callsite_set_args(&C, args);
+  callsite_init(&C, args);
   callsite_resolve_fun(&C, o, fun);
   if (C.type == CALLTYPE_PIKEFUN) {
     FAST_CHECK_THREADS_ON_CALL();
@@ -2113,8 +2112,7 @@ void* low_mega_apply(enum apply_type type, INT32 args, void *arg1, void *arg2)
 {
   struct pike_callsite C;
 
-  callsite_init(&C);
-  callsite_set_args(&C, args);
+  callsite_init(&C, args);
 
   switch (type) {
   case APPLY_STACK:
@@ -2148,8 +2146,7 @@ void* low_mega_apply_tailcall(enum apply_type type, INT32 args, void *arg1, void
   struct pike_frame *frame = Pike_fp;
   struct pike_callsite C;
 
-  callsite_init(&C);
-  callsite_set_args(&C, args);
+  callsite_init(&C, args);
 
   /* We can reuse the current frame, so we set it into C here
    * to allow callsite_resolve_* to pick it up
@@ -2199,8 +2196,7 @@ void* lower_mega_apply_tailcall(INT32 args, struct object *o, ptrdiff_t fun) {
   struct pike_frame *frame = Pike_fp;
   struct pike_callsite C;
 
-  callsite_init(&C);
-  callsite_set_args(&C, args);
+  callsite_init(&C, args);
 
   if (!(frame->flags & PIKE_FRAME_NO_REUSE) && frame->refs == 1) {
       C.frame = Pike_fp;
@@ -2772,8 +2768,7 @@ PMOD_EXPORT void apply_svalue(struct svalue *s, INT32 args)
     ptrdiff_t expected_stack=Pike_sp-args+1 - Pike_interpreter.evaluator_stack;
     struct pike_callsite C;
 
-    callsite_init(&C);
-    callsite_set_args(&C, args);
+    callsite_init(&C, args);
     callsite_resolve_svalue(&C, s);
     callsite_prepare(&C);
     callsite_execute(&C);
