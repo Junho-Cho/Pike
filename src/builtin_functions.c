@@ -8599,7 +8599,6 @@ PMOD_EXPORT void f_map(INT32 args)
            }
            if (i) callsite_reset(&C);
            callsite_execute(&C);
-           callsite_return(&C);
 
            stack_pop_to_no_free (ITEM(d) + i);
            types |= 1 << TYPEOF(ITEM(d)[i]);
