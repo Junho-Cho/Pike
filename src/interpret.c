@@ -2096,8 +2096,6 @@ void *lower_mega_apply( INT32 args, struct object *o, ptrdiff_t fun )
  *   APPLY_SVALUE_STRICT: Apply the svalue at arg1, and don't adjust the
  *                        stack for functions that return void.
  *
- *   APPLY_LOW:		  Apply function #arg2 in object arg1.
- *
  * Return values:
  *
  *   Returns zero if the function was invalid or has been executed.
@@ -2122,9 +2120,6 @@ void* low_mega_apply(enum apply_type type, INT32 args, void *arg1, void *arg2)
       C.flags |= CALL_NEED_NO_RETVAL;
   case APPLY_SVALUE:
       callsite_resolve_svalue(&C, arg1);
-      break;
-  case APPLY_LOW:
-      Pike_fatal("Deprecated. Use lower_mega_apply instead.\n");
       break;
   }
 
@@ -2162,9 +2157,6 @@ void* low_mega_apply_tailcall(enum apply_type type, INT32 args, void *arg1, void
       C.flags |= CALL_NEED_NO_RETVAL;
   case APPLY_SVALUE:
       callsite_resolve_svalue(&C, arg1);
-      break;
-  case APPLY_LOW:
-      Pike_fatal("Deprecated. Use lower_mega_apply instead.\n");
       break;
   }
 
