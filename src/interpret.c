@@ -3435,7 +3435,9 @@ PMOD_EXPORT void callsite_resolve_svalue(struct pike_callsite *c, struct svalue 
     }
     break;
   case T_ARRAY:
-    c->type = CALLTYPE_ARRAY;
+    c->type = (s >= Pike_interpreter.evaluator_stack && s < Pike_sp)
+      ? CALLTYPE_ARRAY_ON_STACK
+      : CALLTYPE_ARRAY;
     c->ptr = s->u.array;
     break;
   case PIKE_T_TYPE:
@@ -3567,8 +3569,8 @@ PMOD_EXPORT void callsite_execute(const struct pike_callsite *c) {
     o_cast(c->ptr, compile_type_to_runtime_type(c->ptr));
     break;
   case CALLTYPE_ARRAY:
-    /* TODO: reenable destructive operation */
-    apply_array(c->ptr, c->args, 0);
+  case CALLTYPE_ARRAY_ON_STACK:
+    apply_array(c->ptr, c->args, c->type == CALLTYPE_ARRAY_ON_STACK);
     break;
   case CALLTYPE_CLONE:
     push_object(clone_object(c->ptr, c->args));
