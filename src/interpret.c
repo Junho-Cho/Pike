@@ -2074,7 +2074,6 @@ void *lower_mega_apply( INT32 args, struct object *o, ptrdiff_t fun )
   callsite_init(&C, args);
   callsite_resolve_fun(&C, o, fun);
   if (C.type == CALLTYPE_PIKEFUN) {
-    FAST_CHECK_THREADS_ON_CALL();
     return C.ptr;
   }
   /* This is only needed for pike functions right now:
@@ -2124,7 +2123,6 @@ void* low_mega_apply(enum apply_type type, INT32 args, void *arg1, void *arg2)
   }
 
   if (C.type == CALLTYPE_PIKEFUN) {
-      FAST_CHECK_THREADS_ON_CALL();
       return C.ptr;
   }
   
@@ -2168,7 +2166,6 @@ void* low_mega_apply_tailcall(enum apply_type type, INT32 args, void *arg1, void
    */
   if (C.frame == frame) {
       if (C.type == CALLTYPE_PIKEFUN) {
-          FAST_CHECK_THREADS_ON_CALL();
           return C.ptr;
       } else C.frame = NULL;
   }
@@ -2195,7 +2192,6 @@ void* lower_mega_apply_tailcall(INT32 args, struct object *o, ptrdiff_t fun) {
 
   if (C.frame == frame) {
       if (C.type == CALLTYPE_PIKEFUN) {
-          FAST_CHECK_THREADS_ON_CALL();
           return C.ptr;
       } else C.frame = NULL;
   }
@@ -3395,6 +3391,8 @@ PMOD_EXPORT void callsite_resolve_fun(struct pike_callsite *c, struct object *o,
   frame->args = args;
   frame->scope = NULL;
 
+  FAST_CHECK_THREADS_ON_CALL();
+
   check_stack(256);
   check_mark_stack(256);
 
@@ -3477,6 +3475,8 @@ static void pike_pop_locals(struct svalue *save_sp, ptrdiff_t n) {
 PMOD_EXPORT void callsite_reset_pikecall(struct pike_callsite *c) {
   struct pike_frame *frame;
 
+  FAST_CHECK_THREADS_ON_CALL();
+
 #ifdef PIKE_DEBUG
   if (c->type != CALLTYPE_PIKEFUN)
     Pike_fatal("Calling callsite_reset_pikecall() on non pike frame.\n");
@@ -3540,7 +3540,6 @@ PMOD_EXPORT void callsite_reset_pikecall(struct pike_callsite *c) {
 static void callsite_return_slowpath(const struct pike_callsite *c);
 
 PMOD_EXPORT void callsite_execute(const struct pike_callsite *c) {
-  FAST_CHECK_THREADS_ON_CALL();
   switch (c->type) {
   default:
   case CALLTYPE_NONE:
