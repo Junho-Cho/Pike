@@ -151,10 +151,22 @@ struct pike_callsite {
     /* this is used for many things */
     void *ptr;
 
-    /* this error handler is used to restore Pike_interpreter.catching_eval_jmpbuf to
-     * saved_jmpbuf when an error happens. only used for calls to pike code. */
-    LOW_JMP_BUF *saved_jmpbuf;
-    ONERROR onerror;
+    union {
+        struct {
+            /* this error handler is used to restore Pike_interpreter.catching_eval_jmpbuf to
+             * saved_jmpbuf when an error happens. only used for calls to pike code. */
+            LOW_JMP_BUF *saved_jmpbuf;
+            ONERROR onerror;
+        } pike;
+        struct {
+            INT32 run_time_type;
+        } cast;
+        struct {
+            struct object *parent;
+            INT16 fun;
+        } parent_clone;
+    } u;
+
 };
 
 PMOD_EXPORT extern int Pike_stack_size;
